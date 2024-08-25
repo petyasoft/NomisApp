@@ -1,6 +1,6 @@
 from utils.core import create_sessions
 from utils.telegram import Accounts
-from utils.city import City
+from utils.nomis import Nomis
 from data.config import hello,USE_PROXY
 import asyncio
 import os
@@ -27,12 +27,12 @@ async def main():
                     proxy_dict[name] = prox
             for thread, account in enumerate(accounts):
                 if account in proxy_dict:
-                    tasks.append(asyncio.create_task(City(account=account, thread=thread, proxy=proxy_dict[account]).main()))
+                    tasks.append(asyncio.create_task(Nomis(account=account, thread=thread, proxy=proxy_dict[account]).main()))
                 else:
-                    tasks.append(asyncio.create_task(City(account=account, thread=thread,proxy = None).main()))
+                    tasks.append(asyncio.create_task(Nomis(account=account, thread=thread,proxy = None).main()))
         else:
             for thread, account in enumerate(accounts):
-                tasks.append(asyncio.create_task(City(account=account, thread=thread,proxy = None).main()))
+                tasks.append(asyncio.create_task(Nomis(account=account, thread=thread,proxy = None).main()))
         await asyncio.gather(*tasks)
 
 if __name__ == '__main__':
