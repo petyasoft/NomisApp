@@ -75,7 +75,7 @@ class Nomis:
                     farm_end = self.convert_to_timestamp(date_str=user_info['nextFarmClaimAt'])
                     if farm_end <= ts_now:
                         await self.claim_farm()
-                        await asyncio.sleep(random.uniform(*config.START_SLEEP_NOMIS))
+                        await asyncio.sleep(random.uniform(*config.START_SLEEP))
                         await self.start_farm()
                 
                 tasks_list = await self.get_tasks()
@@ -85,10 +85,10 @@ class Nomis:
                     for task in tasks:
                         if random.randint(0,1) == 0:
                             await self.verify_task(task_id=task['id'])
-                            await asyncio.sleep(random.uniform(*config.TASKS_SLEEP_NOMIS))
+                            await asyncio.sleep(random.uniform(*config.TASKS_SLEEP))
                             
                 logger.info(f"NOMIS | main | Thread {self.thread} | {self.name} | Круг окончен")
-                await asyncio.sleep(random.uniform(*config.BIG_SLEEP_NOMIS))
+                await asyncio.sleep(random.uniform(*config.END_SLEEP))
             except Exception as err:
                 logger.error(f"NOMIS | main | Thread {self.thread} | {self.name} | {err}")
                 await asyncio.sleep(5*random.randint(*config.MINI_SLEEP))
@@ -151,7 +151,7 @@ class Nomis:
                         app=app,
                         platform='android',
                         write_allowed=True,
-                        start_param=config.REFERRAL_CODE,
+                        start_param=config.REF_CODE_NOMIS,
                     ))
 
                 auth_url = web_view.url
