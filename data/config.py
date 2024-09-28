@@ -22,7 +22,7 @@ UTC = 180
 WORKDIR = "sessions/"
 
 # использование прокси
-USE_PROXY = False # True/False
+USE_PROXY = True # True/False
 
 # задержка между клеймом и стартом фарминга
 START_SLEEP = [30,60]
