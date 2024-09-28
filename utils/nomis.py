@@ -151,7 +151,7 @@ class Nomis:
                         app=app,
                         platform='android',
                         write_allowed=True,
-                        start_param=config.REF_CODE_NOMIS,
+                        start_param=config.REFERRAL_CODE,
                     ))
 
                 auth_url = web_view.url
