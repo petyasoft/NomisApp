@@ -23,6 +23,8 @@ WORKDIR = "sessions/"
 
 # использование прокси
 USE_PROXY = True # True/False
+# проверять прокси
+CHECK_PROXY = True
 
 # задержка между клеймом и стартом фарминга
 START_SLEEP = [30,60]
