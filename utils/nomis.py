@@ -106,7 +106,7 @@ class Nomis:
             'user_id': self.user_id,
         }
 
-        response = await self.session.post('https://cms-tg.nomis.cc/api/ton-twa-user-tasks/verify',json=json_data,proxy = self.proxy)
+        response = await self.session.post('https://cms-api.nomis.cc/api/ton-twa-user-tasks/verify',json=json_data,proxy = self.proxy)
         if (await response.json())['data']['result']:
             logger.success(f"NOMIS | verify_task | Thread {self.thread} | {self.name} | Claimed {(await response.json())['data']['reward']/1000}")
         return await response.json()
@@ -116,7 +116,7 @@ class Nomis:
             'user_id': self.user_id,
         }
         
-        response = await self.session.post("https://cms-tg.nomis.cc/api/ton-twa-users/claim-farm",json=json_data,proxy = self.proxy)
+        response = await self.session.post("https://cms-api.nomis.cc/api/ton-twa-users/claim-farm",json=json_data,proxy = self.proxy)
         logger.success(f"NOMIS | claim_farm | Thread {self.thread} | {self.name} | Claimed farm ")
         return await response.json()
 
@@ -125,7 +125,7 @@ class Nomis:
             'user_id': self.user_id,
         }
 
-        response = await self.session.post("https://cms-tg.nomis.cc/api/ton-twa-users/start-farm",json=json_data,proxy = self.proxy)
+        response = await self.session.post("https://cms-api.nomis.cc/api/ton-twa-users/start-farm",json=json_data,proxy = self.proxy)
         logger.success(f"NOMIS | start_farm | Thread {self.thread} | {self.name} | Start Farm")
         return await response.json()
     
