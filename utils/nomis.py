@@ -94,38 +94,27 @@ class Nomis:
                 await asyncio.sleep(5*random.randint(*config.MINI_SLEEP))
 
     async def get_tasks(self):
-        json_data = {
-            'user_id' : self.user_id
-        }
-        resp = await self.session.get("https://cms-api.nomis.cc/api/users/tasks",params = json_data,proxy = self.proxy)
+        resp = await self.session.get("https://cms-api.nomis.cc/api/users/tasks",proxy = self.proxy)
         return await resp.json()
 
     async def verify_task(self,task_id : int):
         json_data = {
             'task_id': task_id,
-            'user_id': self.user_id,
         }
 
-        response = await self.session.post('https://cms-api.nomis.cc/api/ton-twa-user-tasks/verify',json=json_data,proxy = self.proxy)
+        response = await self.session.post('https://cms-api.nomis.cc/api/users/claim-task',json=json_data,proxy = self.proxy)
         if (await response.json())['data']['result']:
             logger.success(f"NOMIS | verify_task | Thread {self.thread} | {self.name} | Claimed {(await response.json())['data']['reward']/1000}")
         return await response.json()
     
     async def claim_farm(self):
-        json_data = {
-            'user_id': self.user_id,
-        }
         
-        response = await self.session.post("https://cms-api.nomis.cc/api/ton-twa-users/claim-farm",json=json_data,proxy = self.proxy)
+        response = await self.session.post("https://cms-api.nomis.cc/api/ton-twa-users/claim-farm",proxy = self.proxy)
         logger.success(f"NOMIS | claim_farm | Thread {self.thread} | {self.name} | Claimed farm ")
         return await response.json()
 
     async def start_farm(self):
-        json_data = {
-            'user_id': self.user_id,
-        }
-
-        response = await self.session.post("https://cms-api.nomis.cc/api/ton-twa-users/start-farm",json=json_data,proxy = self.proxy)
+        response = await self.session.post("https://cms-api.nomis.cc/api/ton-twa-users/start-farm",proxy = self.proxy)
         logger.success(f"NOMIS | start_farm | Thread {self.thread} | {self.name} | Start Farm")
         return await response.json()
     
