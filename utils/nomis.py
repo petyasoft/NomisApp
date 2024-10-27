@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 from pyrogram.raw.functions.messages import RequestAppWebView
 from pyrogram.raw.types import InputBotAppShortName
-
+import requests
 import aiohttp
 import asyncio
 import random
@@ -38,7 +38,6 @@ class Nomis:
         headers = {
             'accept': 'application/json, text/plain, */*',
             'accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
-            'authorization': 'Bearer 8e25d2673c5025dfcd36556e7ae1b330095f681165fe964181b13430ddeb385a0844815b104eff05f44920b07c073c41ff19b7d95e487a34aa9f109cab754303cd994286af4bd9f6fbb945204d2509d4420e3486a363f61685c279ae5b77562856d3eb947e5da44459089b403eb5c80ea6d544c5aa99d4221b7ae61b5b4cbb55',
             'content-type': 'application/json',
             'origin': 'https://telegram.nomis.cc',
             'priority': 'u=1, i',
@@ -68,11 +67,12 @@ class Nomis:
                 await self.session.close()
                 return 0
             try:
-                if user_info['nextFarmClaimAt'] == None:
+                farm_data = await self.farm_data()
+                if farm_data['nextFarmClaimAt'] == None:
                     await self.start_farm()
                 else:
                     ts_now = datetime.now(tz=timezone.utc).timestamp()*1000
-                    farm_end = self.convert_to_timestamp(date_str=user_info['nextFarmClaimAt'])
+                    farm_end = self.convert_to_timestamp(date_str=farm_data['nextFarmClaimAt'])
                     if farm_end <= ts_now:
                         await self.claim_farm()
                         await asyncio.sleep(random.uniform(*config.START_SLEEP))
@@ -83,6 +83,8 @@ class Nomis:
                 for tasks in tasks_list:
                     tasks = tasks['ton_twa_tasks']
                     for task in tasks:
+                        if task['id'] in [146,145,144,147,196,171,17,201,198,199,200,95,40,167,125,103,115,5,103,61,23,140,141,206,200]:
+                            continue
                         if random.randint(0,1) == 0:
                             await self.verify_task(task_id=task['id'])
                             await asyncio.sleep(random.uniform(*config.TASKS_SLEEP))
@@ -109,15 +111,22 @@ class Nomis:
             return await response.json()
         except:
             pass
+
     
+    async def farm_data(self):
+        response = await self.session.get('https://cms-api.nomis.cc/api/users/farm-data',proxy=self.proxy)
+        return await response.json()
+       
+
     async def claim_farm(self):
-        
-        response = await self.session.post("https://cms-api.nomis.cc/api/ton-twa-users/claim-farm",proxy = self.proxy)
+        json_data = {}
+        response = await self.session.post("https://cms-api.nomis.cc/api/users/claim-farm",json=json_data, proxy = self.proxy)
         logger.success(f"NOMIS | claim_farm | Thread {self.thread} | {self.name} | Claimed farm ")
         return await response.json()
 
     async def start_farm(self):
-        response = await self.session.post("https://cms-api.nomis.cc/api/ton-twa-users/start-farm",proxy = self.proxy)
+        json_data = {}
+        response = await self.session.post("https://cms-api.nomis.cc/api/users/start-farm",json=json_data,headers=self.session.headers, proxy = self.proxy)
         logger.success(f"NOMIS | start_farm | Thread {self.thread} | {self.name} | Start Farm")
         return await response.json()
     
