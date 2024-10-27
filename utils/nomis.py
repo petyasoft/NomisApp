@@ -98,14 +98,17 @@ class Nomis:
         return await resp.json()
 
     async def verify_task(self,task_id : int):
-        json_data = {
-            'task_id': task_id,
-        }
+        try:
+            json_data = {
+                'task_id': task_id,
+            }
 
-        response = await self.session.post('https://cms-api.nomis.cc/api/users/claim-task',json=json_data,proxy = self.proxy)
-        if (await response.json())['data']['result']:
-            logger.success(f"NOMIS | verify_task | Thread {self.thread} | {self.name} | Claimed {(await response.json())['data']['reward']/1000}")
-        return await response.json()
+            response = await self.session.post('https://cms-api.nomis.cc/api/users/claim-task',json=json_data,proxy = self.proxy)
+            if (await response.json())['data']['result']:
+                logger.success(f"NOMIS | verify_task | Thread {self.thread} | {self.name} | Claimed {(await response.json())['data']['reward']/1000}")
+            return await response.json()
+        except:
+            pass
     
     async def claim_farm(self):
         
@@ -160,4 +163,3 @@ class Nomis:
         dt = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%fZ")
         timestamp = int(time.mktime(dt.timetuple()) * 1000 + config.UTC*60*1000)
         return timestamp
-
